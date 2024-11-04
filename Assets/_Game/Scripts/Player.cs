@@ -14,23 +14,35 @@ public class Player : MonoBehaviour
     private bool isGround = true;
     private bool isJumping = false;
     private bool isAttack = false;
+    private bool isDead = false;
+
+    private int coin = 0;
 
     private string currentAnimName;
     private float horizontal;
     //private float vertical;
 
     // Start is called before the first frame update
+    private Vector3 savePoint;
+
     void Start()
     {
+        savePoint = transform.position;
+        OnInit();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if(isDead == true)
+        {
+            return;
+        }
         isGround = CheckGrounded();
 
         horizontal = Input.GetAxisRaw("Horizontal");
         //vertical = Input.GetAxisRaw("Vertical");
+      
         if(isAttack)
         {
             rb.velocity = Vector2.zero;
@@ -84,6 +96,15 @@ public class Player : MonoBehaviour
             rb.velocity = Vector2.zero;
         }
     }
+    /*****Reset position*////
+    void OnInit()
+    {
+        isDead = false;
+        isAttack = false;
+
+        transform.position = savePoint;
+        ChangeAnim("idle");
+    }
     /***********Lazer check ground*/
     private bool CheckGrounded()
     {
@@ -135,6 +156,22 @@ public class Player : MonoBehaviour
         {
             currentAnimName = animName;
             anim.SetTrigger(currentAnimName);      
+        }
+    }
+
+    /*************Collider*/////////////////
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Coin")
+        {
+            coin++;
+            Destroy(collision.gameObject);
+        }
+        if(collision.tag == "DeadZone")
+        {
+            isDead = true;
+            ChangeAnim("die");
+            Invoke(nameof(OnInit), 1f);
         }
     }
 }
