@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,7 +28,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        savePoint = transform.position;
+        SavePoint();
         OnInit();
     }
 
@@ -159,6 +160,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*******Save Point*******/
+    internal void SavePoint()
+    {
+        savePoint = transform.position;
+    }
     /*************Collider*/////////////////
     private void OnTriggerEnter2D(Collider2D collision)
     {
