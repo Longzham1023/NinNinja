@@ -10,6 +10,7 @@ public class Enemy : Character
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private GameObject meleePoint;
 
+
     private IState currentState;
     private bool isRight = true;
     private Character target;
@@ -19,7 +20,7 @@ public class Enemy : Character
 
     private void Update()
     {
-        if(currentState != null)
+        if(currentState != null && !isDead)
         {
             currentState.OnExecute(this);
         }

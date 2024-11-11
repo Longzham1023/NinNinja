@@ -13,10 +13,11 @@ public class Player : Character
     [SerializeField] private Transform throwPoint;
     [SerializeField] private GameObject meleePoint;
 
+
     private bool isGround = true;
     private bool isJumping = false;
     private bool isAttack = false;
-    private bool isDead = false;
+    private bool isDeath = false;
 
     private int coin = 0;
 
@@ -29,9 +30,9 @@ public class Player : Character
 
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if(isDead == true)
+        if(isDead)
         {
             return;
         }
@@ -82,7 +83,7 @@ public class Player : Character
         if (Mathf.Abs(horizontal) > 0.1f)
         {
             ChangeAnim("run");
-            rb.velocity = new Vector2(horizontal * Time.fixedDeltaTime * speed, rb.velocity.y);
+            rb.velocity = new Vector2(horizontal * Time.deltaTime * speed, rb.velocity.y);
 
             transform.rotation = Quaternion.Euler(new Vector3(0, horizontal > 0 ? 0 : 180, 0));
             //transform.localScale= new Vector3(horizontal, 1, 1);
@@ -97,7 +98,6 @@ public class Player : Character
     public override void OnInit()
     {
         base.OnInit();
-        isDead = false;
         isAttack = false;
 
         transform.position = savePoint;
@@ -186,7 +186,7 @@ public class Player : Character
         }
         if(collision.tag == "DeadZone")
         {
-            isDead = true;
+            isDeath = true;
             ChangeAnim("die");
             Invoke(nameof(OnInit), 1f);
         }
