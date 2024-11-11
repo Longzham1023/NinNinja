@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Character
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 5;
-    [SerializeField] private Animator anim;
     [SerializeField] private float jumpForce = 350;
-
+    [SerializeField] private Kunai kunaiPrefab;
+    [SerializeField] private Transform throwPoint;
+    [SerializeField] private GameObject meleePoint;
 
     private bool isGround = true;
     private bool isJumping = false;
@@ -19,18 +20,13 @@ public class Player : MonoBehaviour
 
     private int coin = 0;
 
-    private string currentAnimName;
+    
     private float horizontal;
     //private float vertical;
 
     // Start is called before the first frame update
     private Vector3 savePoint;
 
-    void Start()
-    {
-        SavePoint();
-        OnInit();
-    }
 
     // Update is called once per frame
     void FixedUpdate()
@@ -65,12 +61,12 @@ public class Player : MonoBehaviour
             }
 
             //Attack
-            if (Input.GetKey(KeyCode.F) && isGround)
+            if (Input.GetKey(KeyCode.F))
             {
                 Attack();
             }
             //Throw
-            if (Input.GetKey(KeyCode.C) && isGround)
+            if (Input.GetKey(KeyCode.V))
             {
                 Throw();
             }
@@ -98,13 +94,26 @@ public class Player : MonoBehaviour
         }
     }
     /*****Reset position*////
-    void OnInit()
+    public override void OnInit()
     {
+        base.OnInit();
         isDead = false;
         isAttack = false;
 
         transform.position = savePoint;
         ChangeAnim("idle");
+        DeActiveAttack();
+
+        SavePoint();
+    }
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+    }
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
+        OnInit();
     }
     /***********Lazer check ground*/
     private bool CheckGrounded()
@@ -121,6 +130,8 @@ public class Player : MonoBehaviour
        ChangeAnim("attack");
        isAttack = true;
        Invoke(nameof(ResetAttack), 0.5f);
+       ActiveAttack();
+       Invoke(nameof(DeActiveAttack), 0.5f);
     }
 
     private void Throw()
@@ -128,6 +139,8 @@ public class Player : MonoBehaviour
         ChangeAnim("throw");
         isAttack = true;
         Invoke(nameof(ResetAttack), 0.5f);
+
+        Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation);
     }
 
     private void ResetAttack()
@@ -150,20 +163,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    /*********Change anim***************/
-    private void ChangeAnim(string animName)
-    {
-        if (currentAnimName != animName)
-        {
-            currentAnimName = animName;
-            anim.SetTrigger(currentAnimName);      
-        }
-    }
-
     /*******Save Point*******/
     internal void SavePoint()
     {
         savePoint = transform.position;
+    }
+    private void ActiveAttack()
+    {
+        meleePoint.SetActive(true);
+    }
+    private void DeActiveAttack()
+    {
+        meleePoint.SetActive(false);
     }
     /*************Collider*/////////////////
     private void OnTriggerEnter2D(Collider2D collision)
