@@ -8,7 +8,8 @@ public class Character : MonoBehaviour
     private float hp;
     private string currentAnimName;
     [SerializeField] private Animator anim;
-    [SerializeField] private HeathBar heathBar;
+    [SerializeField] protected HeathBar heathBar;
+    [SerializeField] protected CombatText CBtextPrefabs;
 
     public bool isDead => hp <= 0;
 
@@ -20,7 +21,7 @@ public class Character : MonoBehaviour
     public virtual void OnInit()
     {
         hp = 100;
-        heathBar.OnInit(100);
+        heathBar.OnInit(100, transform);
     }
 
     public virtual void OnDespawn()
@@ -55,6 +56,7 @@ public class Character : MonoBehaviour
                 OnDeath();
             }
             heathBar.SetNewHp(hp);
+            Instantiate(CBtextPrefabs, transform.position + Vector3.up, Quaternion.identity).OnInit(damage);
         }
     }
 }

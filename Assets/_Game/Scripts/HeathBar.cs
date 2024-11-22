@@ -15,11 +15,11 @@ public class HeathBar : MonoBehaviour
     void Update()
     {
         imageFill.fillAmount = Mathf.Lerp(imageFill.fillAmount, hp / maxHp, Time.deltaTime * 5f);
-        //transform.position = target.position + offset;
+        transform.position = target.position + offset;
     }
-    public void OnInit(float maxHp)
+    public void OnInit(float maxHp, Transform target)
     {
-        //this.target = target;
+        this.target = target;
         this.maxHp = maxHp;
         hp = maxHp;
         imageFill.fillAmount = 1;

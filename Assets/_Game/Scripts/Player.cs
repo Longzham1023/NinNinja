@@ -83,7 +83,7 @@ public class Player : Character
         if (Mathf.Abs(horizontal) > 0.1f)
         {
             ChangeAnim("run");
-            rb.velocity = new Vector2(horizontal * Time.deltaTime * speed, rb.velocity.y);
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
             transform.rotation = Quaternion.Euler(new Vector3(0, horizontal > 0 ? 0 : 180, 0));
             //transform.localScale= new Vector3(horizontal, 1, 1);
