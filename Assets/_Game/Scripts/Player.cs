@@ -13,7 +13,6 @@ public class Player : Character
     [SerializeField] private Transform throwPoint;
     [SerializeField] private GameObject meleePoint;
 
-
     private bool isGround = true;
     private bool isJumping = false;
     private bool isAttack = false;
@@ -32,13 +31,15 @@ public class Player : Character
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Update");
+        Debug.LogError("Update");
         if(isDead)
         {
             return;
         }
         isGround = CheckGrounded();
 
-        horizontal = Input.GetAxisRaw("Horizontal");
+        //horizontal = Input.GetAxisRaw("Horizontal");
         //vertical = Input.GetAxisRaw("Vertical");
       
         if(isAttack)
@@ -54,7 +55,10 @@ public class Player : Character
                 return;
             }
             //Jump
-            Jump();
+            if (Input.GetKey(KeyCode.Space) && isGround)
+            {
+                Jump();
+            }
             //Run
             if (Mathf.Abs(horizontal) > 0.1f)
             {
@@ -125,7 +129,7 @@ public class Player : Character
     }
 
     /********Action and animation*/
-    private void Attack()
+    public void Attack()
     {
        ChangeAnim("attack");
        isAttack = true;
@@ -134,7 +138,7 @@ public class Player : Character
        Invoke(nameof(DeActiveAttack), 0.5f);
     }
 
-    private void Throw()
+    public void Throw()
     {
         ChangeAnim("throw");
         isAttack = true;
@@ -148,19 +152,21 @@ public class Player : Character
         isAttack = false;
         ChangeAnim("ilde");
     }
-    private void Run()
-    {
 
-    }
-
-    private void Jump()
+    //public void Jump()
+    //{
+    //    if (Input.GetKey(KeyCode.Space) && isGround)
+    //    {
+    //        isJumping = true;
+    //        ChangeAnim("jump");
+    //        rb.AddForce(jumpForce * Vector2.up);
+    //    }
+    //}
+    public void Jump()
     {
-        if (Input.GetKey(KeyCode.Space) && isGround)
-        {
-            isJumping = true;
-            ChangeAnim("jump");
-            rb.AddForce(jumpForce * Vector2.up);
-        }
+        isJumping = true;
+        ChangeAnim("jump");
+        rb.AddForce(jumpForce * Vector2.up);
     }
 
     /*******Save Point*******/
@@ -177,6 +183,10 @@ public class Player : Character
         meleePoint.SetActive(false);
     }
     /*************Collider*/////////////////
+    public void SetMove(float horizontal)
+    {
+        this.horizontal = horizontal;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag == "Coin")
