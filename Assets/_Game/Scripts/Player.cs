@@ -86,7 +86,7 @@ public class Player : Character
         //Moving
         if (Mathf.Abs(horizontal) > 0.1f)
         {
-            ChangeAnim("run");
+            //ChangeAnim("run");
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
             transform.rotation = Quaternion.Euler(new Vector3(0, horizontal > 0 ? 0 : 180, 0));
@@ -109,10 +109,21 @@ public class Player : Character
         DeActiveAttack();
 
         SavePoint();
+        UIManager.Instance.SetCoin(coin);
     }
     protected override void OnDeath()
     {
         base.OnDeath();
+        if (coin >= 10)
+        {
+            coin -= 10;
+            UIManager.Instance.SetCoin(coin);
+        }
+        else
+        {
+            coin = 0;
+            UIManager.Instance.SetCoin(coin);
+        }
     }
     public override void OnDespawn()
     {
@@ -164,9 +175,12 @@ public class Player : Character
     //}
     public void Jump()
     {
-        isJumping = true;
-        ChangeAnim("jump");
-        rb.AddForce(jumpForce * Vector2.up);
+        if (isGround)
+        {
+            isJumping = true;
+            ChangeAnim("jump");
+            rb.AddForce(jumpForce * Vector2.up);
+        }
     }
 
     /*******Save Point*******/
@@ -192,6 +206,7 @@ public class Player : Character
         if(collision.tag == "Coin")
         {
             coin++;
+            UIManager.Instance.SetCoin(coin);
             Destroy(collision.gameObject);
         }
         if(collision.tag == "DeadZone")
